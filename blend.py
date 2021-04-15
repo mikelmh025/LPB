@@ -101,7 +101,7 @@ def process (args):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--folder", type=str, default="LPB-TestData")
-    parser.add_argument("--gpLevel", type=str, default=6)
+    parser.add_argument("--gpLevel", type=str, default=1)
 
     args = parser.parse_args()
     process(args)
