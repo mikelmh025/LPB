@@ -2,7 +2,10 @@
 This is a small tool for blending two face images together using the Laplacian Pyramid Blending technique.
 
 # Data:
-The test image has been included in the LPB-TestData folder. The demo output is included in the result folder under LPB-TestData.
+The test image has been included in the LPB-TestData folder. 
+
+# Demo:
+The demo output is included in the result folder, seperated by different gpLevel.
 
 # How to use:
 python blend.py

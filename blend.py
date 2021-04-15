@@ -8,10 +8,6 @@ def generate_GP(image_copy,gp_level):
     gp_image = [image_copy]
     for i in range(gp_level):
         image_copy = cv2.pyrDown(image_copy)
-        # cv2.imshow("gp", image_copy)
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
-
         gp_image.append(image_copy)
     return gp_image
 
@@ -21,10 +17,6 @@ def generate_LP(gp, lp_level):
     for i in range(lp_level, 0, -1):
         gaussian_expanded = cv2.pyrUp(gp[i])
         laplacian = cv2.subtract(gp[i-1], gaussian_expanded)
-        # cv2.imshow("LP", laplacian)
-        # cv2.imshow("gp", gp[i-1])
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
         lp_image.append(laplacian)
     return lp_image
 
@@ -65,21 +57,14 @@ def LPB_blend (A, B, Mask,gp_level):
     # now reconstruct
     A_B_reconstruct = A_B_pyramid[0]
     for i in range(1, gp_level):
-        # cv2.imshow("A_B_reconstruct", A_B_reconstruct)
-        # # cv2.waitKey(0)
         A_B_reconstruct = cv2.pyrUp(A_B_reconstruct)
         A_B_reconstruct = cv2.add(A_B_pyramid[i], A_B_reconstruct)
-
-    # cv2.imshow("A_B_reconstruct", A_B_reconstruct)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
     return A_B_reconstruct
     
 
 def process (args):
-
-    save_dir = os.path.join(args.folder, "result","gpLevel="+str(args.gpLevel))
+    save_dir = os.path.join("result","gpLevel="+str(args.gpLevel))
     os.makedirs(save_dir, exist_ok=True)
 
     for filename in glob.glob(os.path.join(args.folder, "A","*.png")):
@@ -101,7 +86,7 @@ def process (args):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--folder", type=str, default="LPB-TestData")
-    parser.add_argument("--gpLevel", type=str, default=1)
+    parser.add_argument("--gpLevel", type=str, default=3)
 
     args = parser.parse_args()
     process(args)
