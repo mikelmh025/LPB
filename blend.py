@@ -20,16 +20,30 @@ def generate_LP(gp, lp_level):
         lp_image.append(laplacian)
     return lp_image
 
-def blend(lp_A, lp_B,gp_Mask):
+def blendLP(lp_A, lp_B, gp_Mask):
     A_B_pyramid = []
     n = 0
     for A_lap, B_lap in zip(lp_A, lp_B):
         n += 1
-        cols, rows, ch = A_lap.shape
-        test_mask = gp_Mask[len(gp_Mask)-n-1]
-        test_A = (A_lap * (1-test_mask)).clip(0, 255).astype(np.uint8)
-        test_B = (B_lap * test_mask).clip(0, 255).astype(np.uint8)
-        laplacian = test_A + test_B
+        cur_mask = gp_Mask[len(gp_Mask)-n-1]
+        cur_A = (A_lap * (1-cur_mask)).clip(0, 255).astype(np.uint8)
+        cur_B = (B_lap * cur_mask).clip(0, 255).astype(np.uint8)
+        laplacian = cur_A + cur_B
+
+        A_B_pyramid.append(laplacian)
+
+    return A_B_pyramid
+
+def blendGP(gp_A, gp_B, gp_Mask):
+    A_B_pyramid = []
+    n = 0
+    for A_lap, B_lap in zip(gp_A, gp_B):
+        n += 1
+        cur_mask = gp_Mask[n-1]
+        cur_A = (A_lap * (1-cur_mask)).clip(0, 255).astype(np.uint8)
+        cur_B = (B_lap * cur_mask).clip(0, 255).astype(np.uint8)
+        laplacian = cur_A + cur_B
+
         A_B_pyramid.append(laplacian)
 
     return A_B_pyramid
@@ -38,6 +52,7 @@ def LPB_blend (A, B, Mask,gp_level):
     # input : A, B, Mask are file directory path
     A = cv2.imread(A)
     B = cv2.imread(B)
+
     Mask = cv2.imread(Mask)/255.0
 
     lp_level = gp_level - 1
@@ -51,13 +66,15 @@ def LPB_blend (A, B, Mask,gp_level):
     lp_A = generate_LP(gp_A, lp_level)
     lp_B = generate_LP(gp_B, lp_level)
 
-    # Blend
-    A_B_pyramid = blend(lp_A, lp_B,gp_Mask)
+    # Blend LP & GP
+    A_B_pyramid = blendLP(lp_A, lp_B,gp_Mask)
+    A_B_GP      = blendGP(gp_A, gp_B,gp_Mask)
+
 
     # now reconstruct
     A_B_reconstruct = A_B_pyramid[0]
     for i in range(1, gp_level):
-        A_B_reconstruct = cv2.pyrUp(A_B_reconstruct)
+        A_B_reconstruct = cv2.pyrUp(A_B_GP[gp_level-i])
         A_B_reconstruct = cv2.add(A_B_pyramid[i], A_B_reconstruct)
 
     return A_B_reconstruct
@@ -86,7 +103,7 @@ def process (args):
 if __name__=="__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--folder", type=str, default="LPB-TestData")
-    parser.add_argument("--gpLevel", type=str, default=3)
+    parser.add_argument("--gpLevel", type=int, default=6)
 
     args = parser.parse_args()
     process(args)
