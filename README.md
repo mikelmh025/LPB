@@ -17,5 +17,10 @@ Two optional parameters:
 `--gpLevel` : [Int]  This is the parameter allowing users to change how many times we down-scale the input images for the blend. From the experiment results, more downscaling will have a smoother blend but a brighter overall tint.  
 
 
+# Compare to baseline
 
 ![Compare to baseline](https://github.com/mikelmh025/LPB/blob/main/vsBaseline/example1.png)
+
+![Compare to baseline](https://github.com/mikelmh025/LPB/blob/main/vsBaseline/example2.png)
+
+![Compare to baseline](https://github.com/mikelmh025/LPB/blob/main/vsBaseline/example3.png)
