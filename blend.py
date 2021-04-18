@@ -18,26 +18,6 @@ import imutils
 from scipy import signal
 
 
-def blur(img):
-
-    img = img *255
-
-    # First a 1-D  Gaussian
-    t = np.linspace(-10, 10, 30 )
-    bump = np.exp(-0.1*t**2)
-    bump /= np.trapz(bump) # normalize the integral to 1
-
-    # make a 2-D kernel out of it
-    kernel = bump[:, np.newaxis] * bump[np.newaxis, :]
-
-    # # mode='same' is there to enforce the same output shape as input arrays
-    # # (ie avoid border effects)
-    img_cv = signal.fftconvolve(img, kernel[:, :, np.newaxis], mode='same')
-
-    img_cv = img_cv/255
-    
-    return img_cv.clip(0, 1)
-
 
 def one_level_laplacian(img):
     # generate Gaussian pyramid for Apple
@@ -52,8 +32,7 @@ def one_level_laplacian(img):
     upsampled_A = pyramid_expand(small_A,upscale=2, multichannel=True)
 
     # generate Laplacian level for A
-    laplace_A = A -upsampled_A# cv2.subtract(A , upsampled_A)
-    # laplace_A = cv2.subtract(A , upsampled_A)
+    laplace_A = A -upsampled_A
 
     
     return small_A, upsampled_A, laplace_A
@@ -63,7 +42,6 @@ def generate_GP(image_copy,gp_level):
     gp_image = [image_copy]
     for i in range(gp_level):
         
-        # image_copy = blur(image_copy)
 
         image_copy = pyramid_reduce(image_copy,downscale=2, multichannel=True,sigma= 3)
         gp_image.append(image_copy)
@@ -90,7 +68,6 @@ def generate_GP_LP(image_copy,gp_level):
 
 def LPB_blend (A, B, Mask,gp_level):
 
-    # image = data.astronaut()
     A = plt.imread(A)
     B = plt.imread(B)/255
     Mask = plt.imread(Mask)
