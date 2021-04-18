@@ -99,9 +99,6 @@ def LPB_blend (A, B, Mask,gp_level):
     GP_A,LP_A   = generate_GP_LP(A.copy()       ,gp_level)    
     GP_B,LP_B   = generate_GP_LP(B.copy()       ,gp_level)
     GP_Mask     = generate_GP   (Mask.copy()    ,gp_level)    
-    fig, ax = plt.subplots()
-    ax.imshow(GP_Mask[2])
-    plt.savefig("out.png")
 
     GP_Mask_neg = generate_GP   (Mask_neg.copy(),gp_level)  
     
